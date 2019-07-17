@@ -1,0 +1,16 @@
+Package: eda
+Type: Package
+Title: Exploratory Data Analysis for Binary Data
+Version: 0.1.0
+Author: Theun van Vliet
+Maintainer: Theun van Vliet <theun.van.vliet@accenture.com>
+Description: Provide tools for EDA
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+  dplyr,
+  dbplot,
+  shiny,
+  miniUI
+RoxygenNote: 6.1.1

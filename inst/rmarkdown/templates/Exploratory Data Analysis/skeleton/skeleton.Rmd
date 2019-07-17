@@ -1,0 +1,50 @@
+---
+title: "Binary EDA"
+output: html_document
+params:
+  analysis_results:
+    label: "EDA output results:"
+    value: "analysis_results.RData"
+    input: file
+  type:
+    label: "Type of results:"
+    value: average
+    input: radio
+    choices: [average, count]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(eda)
+```
+
+```{r get_data}
+load(params$analysis_results)
+```
+
+
+## Categorical variables
+
+```{r plot_cat}
+print_results <- function(x) {
+  print(plot_analysis_category(x, type = params$type) +
+                geom_hline(aes(yintercept = target_line), size = 1))
+  print(plot_analysis_category(x, type = 'count_all'))
+}
+
+factor_results$analysis_table %>% 
+  walk(print_results)
+```
+
+## Numerical variables
+
+```{r plot_num}
+print_results <- function(x) {
+  print(plot_analysis_category(x, type = 'average') +
+                geom_hline(aes(yintercept = target_line), size = 1))
+  print(plot_analysis_category(x, type = 'count_all'))
+}
+
+numeric_results$analysis_table %>% 
+  walk(print_results)
+```
