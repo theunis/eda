@@ -12,5 +12,6 @@ Imports:
   dplyr,
   dbplot,
   shiny,
-  miniUI
+  miniUI,
+  assertthat
 RoxygenNote: 6.1.1

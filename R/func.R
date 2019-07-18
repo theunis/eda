@@ -20,6 +20,7 @@
 #'   the results back
 #' @param bins Number of bins to use for numeric variables
 create_analysis_table <- function(df, var_name, target_var, type = 'count') {
+  assertthat::assert_that(length(unique(df[,target_var])[[1]]) == 2)
   if (type == 'count') {
     result <- df %>%
       dplyr::group_by(!!rlang::sym(var_name), !!rlang::sym(target_var)) %>%
@@ -36,6 +37,7 @@ create_analysis_table <- function(df, var_name, target_var, type = 'count') {
 
 #' @rdname create_analysis_table
 create_numeric_table <- function(df, var_name, target_var, type = 'count', bins = 30) {
+  assertthat::assert_that(length(unique(df[,target_var])[[1]]) == 2)
   if (type == 'count') {
     result <- df %>%
       dplyr::filter(!is.na(!!rlang::sym(var_name))) %>%

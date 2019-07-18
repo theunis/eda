@@ -16,6 +16,8 @@ params:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(eda)
+library(purrr)
+library(ggplot2)
 ```
 
 ```{r get_data}
