@@ -13,5 +13,8 @@ Imports:
   dbplot,
   shiny,
   miniUI,
-  assertthat
+  assertthat,
+  readr,
+  rlang,
+  tidyr
 RoxygenNote: 6.1.1

@@ -9,20 +9,26 @@
 #' @param type Can be \code{'count'} or \code{'average'} depicting how to get
 #'   the results back
 #' @param bins Number of bins to use for numeric variables
-get_factor_results <- function(df, target_var, ignore_vars = c(), type = 'average') {
+get_factor_results <- function(df, target_var, ignore_vars = c(),
+                               type = 'average') {
   factor_vars <- get_factor_vars(df, target_var, ignore_vars = ignore_vars)
   factor_results <- tibble::tibble(variable = factor_vars) %>%
     dplyr::group_by(variable) %>%
-    dplyr::do(analysis_table = create_analysis_table(df, var_name = .$variable, target_var = target_var, type = type))
+    dplyr::do(analysis_table = create_analysis_table(df, var_name = .$variable,
+                                                     target_var = target_var,
+                                                     type = type))
   factor_results
 }
 
 #' @rdname get_factor_results
-get_numeric_results <- function(df, target_var, ignore_vars = c(), type = 'average', bins = 30) {
+get_numeric_results <- function(df, target_var, ignore_vars = c(),
+                                type = 'average', bins = 30) {
   numeric_vars <- get_numeric_vars(df, target_var, ignore_vars = ignore_vars)
   numeric_results <- tibble::tibble(variable = numeric_vars) %>%
     dplyr::group_by(variable) %>%
-    dplyr::do(analysis_table = create_numeric_table(df, var_name = .$variable, target_var = target_var, type = type, bins = bins))
+    dplyr::do(analysis_table = create_numeric_table(df, var_name = .$variable,
+                                                    target_var = target_var,
+                                                    type = type, bins = bins))
   numeric_results
 }
 
