@@ -1,0 +1,4 @@
+Name: Run EDA tool
+Description: Tool to create EDA output and build EDA plots
+Binding: run_eda
+Interactive: true
