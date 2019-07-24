@@ -1,5 +1,9 @@
 run_eda <- function(data = NULL) {
 
+  assertthat::assert_that(
+    !is.null(unlist(eapply(.GlobalEnv,is.data.frame))),
+    msg = 'No data.frame found, load a data.frame in the environment before running the tool'
+  )
   datasets <- names(which(unlist(eapply(.GlobalEnv,is.data.frame))))
   assertthat::assert_that(length(datasets) > 0)
 
@@ -139,6 +143,7 @@ get_output_selectedvars <- function(analysis_results_file) {
     load(analysis_results_file)
   } else {
     out <- NULL
+    return(out)
   }
   # check that the right data.frames are loaded:
   assertthat::assert_that(exists('factor_results') &&
@@ -157,6 +162,7 @@ get_output_target <- function(analysis_results_file) {
     load(analysis_results_file)
   } else {
     out <- NULL
+    return(out)
   }
   # check that the right data.frames are loaded:
   assertthat::assert_that(exists('factor_results') &&
@@ -171,6 +177,7 @@ get_output_target <- function(analysis_results_file) {
   } else {
     out <- NULL
   }
+  out
 }
 
 rename_colname_to_value <- function(x, y) {
