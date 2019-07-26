@@ -21,9 +21,9 @@ run_eda <- function(data = NULL) {
       shiny::checkboxInput("buildnew", "Build new EDA dataset", value = TRUE),
       shiny::conditionalPanel(
         condition = "input.buildnew == true",
-        shiny::selectInput("targetvar", "Target variable", colnames(data)),
+        shiny::selectInput("targetvar", "Target variable", c()),
         shiny::fillRow(
-          shiny::selectInput("ignorevars", "Ignore variables", colnames(data),
+          shiny::selectInput("ignorevars", "Ignore variables", c(),
                              multiple = TRUE, size = 8, selectize = FALSE),
           shiny::fluidRow(
             shiny::column(12, align = "center",
@@ -55,8 +55,12 @@ run_eda <- function(data = NULL) {
 
   server <- function(input, output, session) {
 
+    data <- reactive({
+      eval(rlang::sym(input$dataset))
+    })
+
     data_variables <- reactive({
-      colnames(eval(rlang::sym(input$dataset)))
+      colnames(data())
     })
 
     shiny::observe({
@@ -93,11 +97,11 @@ run_eda <- function(data = NULL) {
     # Handle the Done button being pressed.
     shiny::observeEvent(input$done, {
       if (input$buildnew) {
-        factor_results <- get_factor_results(data, input$targetvar,
+        factor_results <- get_factor_results(data(), input$targetvar,
                                              ignored_vars, type = 'average')
-        numeric_results <- get_numeric_results(data, input$targetvar,
+        numeric_results <- get_numeric_results(data(), input$targetvar,
                                                ignored_vars, type = 'average')
-        target_line <- get_target_line(data, input$targetvar)
+        target_line <- get_target_line(data(), input$targetvar)
         outputfile <- paste0(getwd(),
                              "/analysis_results-", input$dataset, ".RData")
 
@@ -127,7 +131,7 @@ run_eda <- function(data = NULL) {
         rmarkdown::render(eda_rmdfile, output_file = rmdfile,
                           params = list(analysis_results = outputfile,
                                         type = input$type))
-        if (input$openrmd) {
+        if (input$openhtml) {
           browseURL(file.path("file:/", rmdfile))
         }
       }
