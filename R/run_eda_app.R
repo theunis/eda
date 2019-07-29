@@ -39,10 +39,7 @@ run_eda <- function(data = NULL) {
                              multiple = TRUE, size = 8, selectize = FALSE),
           flex = c(5, 2, 5),
           height = "200px"
-        ),
-        shiny::radioButtons("type", "Type of EDA output",
-                            choices = c("average", "count"),
-                            selected = "average")
+        )
       ),
       shiny::checkboxInput("writecsv", "Write CSV file", value = FALSE),
       shiny::checkboxInput("buildrmd", "Build Rmd file", value = TRUE),
@@ -114,12 +111,8 @@ run_eda <- function(data = NULL) {
         outputfile_csv <- paste0(getwd(),
                              "/analysis_results-", input$dataset, ".csv")
         load(outputfile)
-        res <- dplyr::bind_rows(factor_results, numeric_results)
-        res$analysis_table <- res$analysis_table %>%
-          map(rename_colname_to_value, 'value')
-        res %>%
-          tidyr::unnest(analysis_table) %>%
-          dplyr::mutate(average = target_line) %>%
+        res <- dplyr::bind_rows(factor_results, numeric_results) %>%
+          flatten_analysis_table() %>%
           readr::write_csv(path = outputfile_csv)
       }
       if (input$buildrmd) {
@@ -130,7 +123,7 @@ run_eda <- function(data = NULL) {
         rmdfile <- paste0(getwd(), '/EDA-', input$dataset, '.html')
         rmarkdown::render(eda_rmdfile, output_file = rmdfile,
                           params = list(analysis_results = outputfile,
-                                        type = input$type))
+                                        type = 'average'))
         if (input$openhtml) {
           browseURL(file.path("file:/", rmdfile))
         }
@@ -187,4 +180,14 @@ get_output_target <- function(analysis_results_file) {
 rename_colname_to_value <- function(x, y) {
   colnames(x)[1] <- y
   x
+}
+
+flatten_analysis_table <- function(res) {
+  res$analysis_table <- res$analysis_table %>%
+    map(rename_colname_to_value, 'value')
+
+  res <- res %>%
+    tidyr::unnest(analysis_table) %>%
+    dplyr::mutate(average = target_line)
+  res
 }
