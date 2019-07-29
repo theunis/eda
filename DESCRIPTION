@@ -18,3 +18,4 @@ Imports:
   rlang,
   tidyr
 RoxygenNote: 6.1.1
+Remotes: vegawidget/vlbuildr
