@@ -10,8 +10,8 @@ plot_analysis_category_vl <- function(analysis_result, type = 'average') {
       vlbuildr::vl_mark_bar()
 
     target_line_chart <- vlbuildr::vl_chart() %>%
-      vlbuildr::vl_add_data(values = factor_results$analysis_table[[1]] %>%
-                    mutate(Label_delta = target_line)) %>%
+      vlbuildr::vl_add_data(values = analysis_result %>%
+                    dplyr::mutate(Label_delta = target_line)) %>%
       vlbuildr::vl_encode_y("Label_delta", "quantitative") %>%
       vlbuildr::vl_mark_rule(size = 2)
 

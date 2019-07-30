@@ -68,21 +68,25 @@ create_numeric_table <- function(df, var_name, target_var, type = 'count', bins 
 #'   using counts, \code{'average'} to plot the results when calculated using
 #'   the average of the target variable or \code{'count_all'} to get a count of
 #'   all the values in the variables
-plot_analysis_category <- function(analysis_result, type = 'count', position = 'fill') {
+#' @param color The fill color of the bars
+plot_analysis_category <- function(analysis_result, type = 'count', position = 'fill', color = '#df0000') {
   var_name <- colnames(analysis_result)[1]
   target_var <- colnames(analysis_result)[2]
   if (type == 'count') {
     ggplot2::ggplot(analysis_result) +
       ggplot2::geom_col(aes_string(x = var_name, y = 'count', fill = target_var), position = position) +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1))
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)) +
+      ggplot2::theme_minimal()
   } else if (type == 'average') {
     ggplot2::ggplot(analysis_result) +
-      ggplot2::geom_col(aes_string(x = var_name, y = target_var), fill = '#df0000') +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1))
+      ggplot2::geom_col(aes_string(x = var_name, y = target_var), fill = color) +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)) +
+      ggplot2::theme_minimal()
   } else if (type == 'count_all') {
     ggplot2::ggplot(analysis_result) +
-      ggplot2::geom_col(aes_string(x = var_name, y = 'count'), fill = '#ec8800') +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1))
+      ggplot2::geom_col(aes_string(x = var_name, y = 'count'), fill = color) +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)) +
+      ggplot2::theme_minimal()
   }
 }
 

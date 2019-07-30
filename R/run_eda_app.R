@@ -45,6 +45,10 @@ run_eda <- function(data = NULL) {
       shiny::checkboxInput("buildrmd", "Build Rmd file", value = TRUE),
       shiny::conditionalPanel(
         condition = "input.buildrmd == true",
+        shiny::checkboxInput("usevegalite", "Create Vegalite plots", value = FALSE),
+        shiny::textInput("avgcolor", "Average bars color", value = "#df0000"),
+        shiny::textInput("countcolor", "Count bars color", value = "#ec8800"),
+        shiny::textInput("targetlinecolor", "Target line color", value = "#000000"),
         shiny::checkboxInput("openhtml", "Open output HTML file", value = TRUE)
       )
     )
@@ -93,14 +97,14 @@ run_eda <- function(data = NULL) {
 
     # Handle the Done button being pressed.
     shiny::observeEvent(input$done, {
+      outputfile <- paste0(getwd(),
+                           "/analysis_results-", input$dataset, ".RData")
       if (input$buildnew) {
         factor_results <- get_factor_results(data(), input$targetvar,
                                              ignored_vars, type = 'average')
         numeric_results <- get_numeric_results(data(), input$targetvar,
                                                ignored_vars, type = 'average')
         target_line <- get_target_line(data(), input$targetvar)
-        outputfile <- paste0(getwd(),
-                             "/analysis_results-", input$dataset, ".RData")
 
         save(factor_results, numeric_results, target_line, file = outputfile)
         cat("Load the results using load('", outputfile, "')\n", sep = "")
@@ -116,14 +120,26 @@ run_eda <- function(data = NULL) {
           readr::write_csv(path = outputfile_csv)
       }
       if (input$buildrmd) {
-        eda_rmdfile <- system.file(
-          "rmarkdown/templates/Exploratory Data Analysis/skeleton",
-          "skeleton.Rmd", package = "eda"
+        if (input$usevegalite) {
+          eda_rmdfile <- system.file(
+            "rmarkdown/templates/Exploratory Data Analysis Vegalite/skeleton",
+            "skeleton.Rmd", package = "eda"
           )
-        rmdfile <- paste0(getwd(), '/EDA-', input$dataset, '.html')
-        rmarkdown::render(eda_rmdfile, output_file = rmdfile,
-                          params = list(analysis_results = outputfile,
-                                        type = 'average'))
+          rmdfile <- paste0(getwd(), '/EDA-', input$dataset, '.html')
+          rmarkdown::render(eda_rmdfile, output_file = rmdfile,
+                            params = list(analysis_results = outputfile))
+        } else {
+          eda_rmdfile <- system.file(
+            "rmarkdown/templates/Exploratory Data Analysis/skeleton",
+            "skeleton.Rmd", package = "eda"
+          )
+          rmdfile <- paste0(getwd(), '/EDA-', input$dataset, '.html')
+          rmarkdown::render(eda_rmdfile, output_file = rmdfile,
+                            params = list(analysis_results = outputfile,
+                                          avgcolor = input$avgcolor,
+                                          countcolor = input$countcolor,
+                                          targetlinecolor = input$targetlinecolor))
+        }
         if (input$openhtml) {
           browseURL(file.path("file:/", rmdfile))
         }

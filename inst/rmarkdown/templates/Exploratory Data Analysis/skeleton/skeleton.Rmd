@@ -11,6 +11,18 @@ params:
     value: average
     input: radio
     choices: [average, count]
+  avgcolor:
+    label: "Color of the average plots in hexadecimal"
+    value: "#df0000"
+    input: text
+  countcolor:
+    label: "Color of the count plots in hexadecimal"
+    value: "#df0000"
+    input: text
+  targetlinecolor:
+    label: "Target line color in hexadecimal"
+    value: "#000000"
+    input: text
 ---
 
 ```{r setup, include=FALSE}
@@ -29,9 +41,9 @@ load(params$analysis_results)
 
 ```{r plot_cat}
 print_results <- function(x) {
-  print(plot_analysis_category(x, type = params$type) +
-                geom_hline(aes(yintercept = target_line), size = 1))
-  print(plot_analysis_category(x, type = 'count_all'))
+  print(plot_analysis_category(x, type = params$type, color = params$avgcolor) +
+                geom_hline(aes(yintercept = target_line), color = params$targetlinecolor, size = 1))
+  print(plot_analysis_category(x, type = 'count_all', color = params$countcolor))
 }
 
 factor_results$analysis_table %>% 
@@ -42,9 +54,9 @@ factor_results$analysis_table %>%
 
 ```{r plot_num}
 print_results <- function(x) {
-  print(plot_analysis_category(x, type = 'average') +
-                geom_hline(aes(yintercept = target_line), size = 1))
-  print(plot_analysis_category(x, type = 'count_all'))
+  print(plot_analysis_category(x, type = 'average', color = params$avgcolor) +
+                geom_hline(aes(yintercept = target_line), color = params$targetlinecolor, size = 1))
+  print(plot_analysis_category(x, type = 'count_all', color = params$countcolor))
 }
 
 numeric_results$analysis_table %>% 

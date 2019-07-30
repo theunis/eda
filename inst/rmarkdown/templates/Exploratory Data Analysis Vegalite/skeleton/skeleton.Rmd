@@ -1,0 +1,37 @@
+---
+title: "Binary EDA"
+output: html_document
+params:
+  analysis_results:
+    label: "EDA output results:"
+    value: "analysis_results-mtcars.RData"
+    input: file
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(eda)
+library(purrr)
+library(vlbuildr)
+library(vegawidget)
+library(widgetframe)
+```
+
+```{r get_data}
+load(params$analysis_results)
+```
+
+
+## Categorical variables
+
+```{r plot_cat}
+plt <- plot_all_analysis_results_vl(factor_results)
+vegawidget(plt)
+```
+
+## Numerical variables
+
+```{r plot_num}
+plt <- plot_all_analysis_results_vl(numeric_results)
+vegawidget(plt)
+```
