@@ -1,6 +1,9 @@
 ---
 title: "Binary EDA"
-output: html_document
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    horizontal_layout: scroll
 params:
   analysis_results:
     label: "EDA output results:"
@@ -8,30 +11,34 @@ params:
     input: file
 ---
 
+<style>
+  .chart-wrapper, .chart-stage {
+    overflow: auto !important;
+  }
+</style>
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+library(flexdashboard)
 library(eda)
 library(purrr)
 library(vlbuildr)
 library(vegawidget)
-library(widgetframe)
-```
-
-```{r get_data}
 load(params$analysis_results)
 ```
 
+Row {.tabset}
+-----------------------------------------------------------------------
 
-## Categorical variables
+### Categorical variables
 
-```{r plot_cat}
+```{r}
 plt <- plot_all_analysis_results_vl(factor_results)
 vegawidget(plt)
 ```
 
-## Numerical variables
+### Numeric variables
 
-```{r plot_num}
+```{r}
 plt <- plot_all_analysis_results_vl(numeric_results)
 vegawidget(plt)
 ```
