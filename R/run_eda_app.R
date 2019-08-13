@@ -110,8 +110,6 @@ run_eda <- function(data = NULL) {
         cat("Load the results using load('", outputfile, "')\n", sep = "")
       }
       if (input$writecsv) {
-        outputfile <- paste0(getwd(),
-                             "/analysis_results-", input$dataset, ".RData")
         outputfile_csv <- paste0(getwd(),
                              "/analysis_results-", input$dataset, ".csv")
         load(outputfile)

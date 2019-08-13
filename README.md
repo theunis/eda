@@ -15,7 +15,7 @@ Make sure you that you point to the right zip file on your computer.
 
 ## Usage
 
-This package contains an add-in which you can only use use in RStudio. You will need to have a data.frame loaded in your workspace. Then you can click on Addins under your menu bar at the top and click on 'Run EDA tool'.
+This package contains an add-in which you can only use use in RStudio. You will need to have a data.frame loaded in your workspace. Then you can click on Addins under your menu bar at the top and click on 'Run EDA tool'. If it doesn't show, try restarting RStudio first.
 
 Point to the right data.frame, select your target variable and select the variables you want to analyze (be careful not to pick variables with many categories, or numeric variables which are imported as text, it will take a long time and will not be useful).
 

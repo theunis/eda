@@ -1,6 +1,7 @@
 plot_analysis_category_vl <- function(analysis_result, type = 'average') {
   variable_name <- colnames(analysis_result)[1]
   target_var <- colnames(analysis_result)[2]
+  target_line <- sum(analysis_result['count']*analysis_result[target_var]) / sum(analysis_result['count'])
 
   if (type == 'average') {
     barchart <- vlbuildr::vl_chart() %>%
@@ -9,10 +10,12 @@ plot_analysis_category_vl <- function(analysis_result, type = 'average') {
       vlbuildr::vl_encode_y(target_var, "quantitative") %>%
       vlbuildr::vl_mark_bar()
 
+    tl_analysis_result <- analysis_result
+    tl_analysis_result[target_var] <- target_line
+
     target_line_chart <- vlbuildr::vl_chart() %>%
-      vlbuildr::vl_add_data(values = analysis_result %>%
-                    dplyr::mutate(Label_delta = target_line)) %>%
-      vlbuildr::vl_encode_y("Label_delta", "quantitative") %>%
+      vlbuildr::vl_add_data(values = tl_analysis_result) %>%
+      vlbuildr::vl_encode_y(target_var, "quantitative") %>%
       vlbuildr::vl_mark_rule(size = 2)
 
     return(vl_layer(barchart, target_line_chart))
