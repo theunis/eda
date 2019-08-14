@@ -16,6 +16,12 @@ Imports:
   assertthat,
   readr,
   rlang,
-  tidyr
+  tidyr,
+  magrittr,
+  ggplot2,
+  purrr,
+  rmarkdown,
+  tibble,
+  vlbuildr
 RoxygenNote: 6.1.1
 Remotes: vegawidget/vlbuildr

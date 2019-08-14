@@ -2,10 +2,14 @@
 % Please edit documentation in R/func.R
 \name{plot_analysis_category}
 \alias{plot_analysis_category}
+\alias{plot_analysis_category_vl}
 \title{Plot EDA tables}
 \usage{
 plot_analysis_category(analysis_result, type = "count",
-  position = "fill")
+  position = "fill", color = "#df0000")
+
+plot_analysis_category_vl(analysis_result, type = "average",
+  color = "salmon")
 }
 \arguments{
 \item{analysis_result}{The EDA analysis result as a \code{'data.frame'}}
@@ -14,6 +18,10 @@ plot_analysis_category(analysis_result, type = "count",
 using counts, \code{'average'} to plot the results when calculated using
 the average of the target variable or \code{'count_all'} to get a count of
 all the values in the variables}
+
+\item{position}{When \code{type = 'count'}, what position parameter to use}
+
+\item{color}{The fill color of the bars}
 }
 \description{
 Create plots with all variables in the EDA table created using

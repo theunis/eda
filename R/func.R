@@ -61,13 +61,16 @@ create_numeric_table <- function(df, var_name, target_var, type = 'count', bins 
 #' \code{create_analysis_table} or \code{create_numeric_table}.
 #'
 #' Use the right type (\code{'count'} or \code{'average'}}), depending on
-#' whether the EDA table was created using \code{'count'} or \code{'average'}
+#' whether the EDA table was created using \code{'count'} or \code{'average'}.
+#'
+#' For Vega-Lite plots use the function \code{plot_analysis_category_vl}.
 #'
 #' @param analysis_result The EDA analysis result as a \code{'data.frame'}
 #' @param type Can be \code{'count'} to plot the EDA resuls when calculated
 #'   using counts, \code{'average'} to plot the results when calculated using
 #'   the average of the target variable or \code{'count_all'} to get a count of
 #'   all the values in the variables
+#' @param position When \code{type = 'count'}, what position parameter to use
 #' @param color The fill color of the bars
 plot_analysis_category <- function(analysis_result, type = 'count', position = 'fill', color = '#df0000') {
   var_name <- colnames(analysis_result)[1]
@@ -120,3 +123,70 @@ get_numeric_vars <- function(df, target_var, ignore_vars = c()) {
   numeric_vars <- numeric_vars[!(numeric_vars %in% c(target_var, ignore_vars))]
   numeric_vars
 }
+
+#' @rdname plot_analysis_category
+plot_analysis_category_vl <- function(analysis_result, type = 'average', color = 'salmon') {
+  variable_name <- colnames(analysis_result)[1]
+  target_var <- colnames(analysis_result)[2]
+  target_line <- sum(analysis_result['count']*analysis_result[target_var]) / sum(analysis_result['count'])
+
+  if (type == 'average') {
+    barchart <- vlbuildr::vl_chart() %>%
+      vlbuildr::vl_add_data(values = analysis_result) %>%
+      vlbuildr::vl_encode_x(variable_name, "nominal") %>%
+      vlbuildr::vl_encode_y(target_var, "quantitative") %>%
+      vlbuildr::vl_mark_bar(color = color)
+
+    tl_analysis_result <- analysis_result
+    tl_analysis_result[target_var] <- target_line
+
+    target_line_chart <- vlbuildr::vl_chart() %>%
+      vlbuildr::vl_add_data(values = tl_analysis_result) %>%
+      vlbuildr::vl_encode_y(target_var, "quantitative") %>%
+      vlbuildr::vl_mark_rule(size = 2)
+
+    return(vlbuildr::vl_layer(barchart, target_line_chart))
+  } else if (type == 'count_all') {
+    barchart <- vlbuildr::vl_chart() %>%
+      vlbuildr::vl_add_data(values = analysis_result) %>%
+      vlbuildr::vl_encode_x(variable_name, "nominal") %>%
+      vlbuildr::vl_encode_y("count", "quantitative") %>%
+      vlbuildr::vl_mark_bar(color = color)
+    return(barchart)
+  }
+}
+
+#' Plot all EDA tables using Vega-Lite
+#'
+#' Create plots with all variables in the EDA table created using
+#' \code{get_factor_results} or \code{get_numeric_results}.
+#'
+#' @param analysis_results The EDA analysis results as a \code{'data.frame'}
+#' @param which Which plots to show, can be \code{'count'} plotting the
+#'   histograms, \code{'average'} plotting the averages of the target variable,
+#'   or \code{'both'} plotting both averages and histograms.
+#' @param color_avg,color_count The fill color of the bars for averages and
+#'   counts.
+plot_all_analysis_results_vl <- function(analysis_results, which = 'both', color_avg = 'salmon', color_count = 'skyblue') {
+  avg_lst <- purrr::map(analysis_results$analysis_table, plot_analysis_category_vl, color = color_avg)
+  count_lst <- purrr::map(analysis_results$analysis_table, plot_analysis_category_vl, type = 'count_all', color = color_count)
+
+  switch (which,
+          'both' = {
+            lst <- append(avg_lst, count_lst)
+            lst[['columns']] <- length(avg_lst)
+            do.call(vlbuildr::vl_concat, lst)
+          },
+          'average' = {
+            avg_lst[['columns']] <- length(avg_lst)
+            do.call(vlbuildr::vl_concat, avg_lst)
+          },
+          'count' = {
+            count_lst[['columns']] <- length(count_lst)
+            do.call(vlbuildr::vl_concat, count_lst)
+          }
+  )
+
+}
+
+

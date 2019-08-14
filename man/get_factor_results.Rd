@@ -3,7 +3,7 @@
 \name{get_factor_results}
 \alias{get_factor_results}
 \alias{get_numeric_results}
-\title{Create the EDA \code{data.frame} for each of the variables in a dataset}
+\title{Create EDA data for variables in a dataset}
 \usage{
 get_factor_results(df, target_var, ignore_vars = c(), type = "average")
 
@@ -19,6 +19,8 @@ get_numeric_results(df, target_var, ignore_vars = c(),
 
 \item{type}{Can be \code{'count'} or \code{'average'} depicting how to get
 the results back}
+
+\item{bins}{Number of bins to use for numeric variables}
 }
 \description{
 Get the EDA output with all the results for the factor or numeric variables

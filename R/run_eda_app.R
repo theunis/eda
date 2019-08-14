@@ -198,7 +198,7 @@ rename_colname_to_value <- function(x, y) {
 
 flatten_analysis_table <- function(res) {
   res$analysis_table <- res$analysis_table %>%
-    map(rename_colname_to_value, 'value')
+    purrr::map(rename_colname_to_value, 'value')
 
   res <- res %>%
     tidyr::unnest(analysis_table) %>%
