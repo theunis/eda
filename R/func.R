@@ -36,20 +36,36 @@ create_analysis_table <- function(df, var_name, target_var, type = 'count') {
 }
 
 #' @rdname create_analysis_table
-create_numeric_table <- function(df, var_name, target_var, type = 'count', bins = 30) {
+create_numeric_table <- function(df, var_name, target_var, type = 'count', bins = 30, intlog_binning = FALSE) {
   # assertthat::assert_that(length(unique(df[,target_var])[[1]]) == 2)
   if (type == 'count') {
-    result <- df %>%
-      dplyr::filter(!is.na(!!rlang::sym(var_name))) %>%
-      dplyr::group_by(!!rlang::sym(var_name) := !!dbplot::db_bin(!!rlang::sym(var_name), bins = bins),
-               !!rlang::sym(target_var)) %>%
-      dplyr::summarise(count = dplyr::n())
+    if (intlog_binning) {
+      result <- df %>%
+        dplyr::filter(!is.na(!!rlang::sym(var_name))) %>%
+        dplyr::group_by(!!rlang::sym(var_name) := intlog_bin(!!rlang::sym(var_name)),
+                        !!rlang::sym(target_var)) %>%
+        dplyr::summarise(count = dplyr::n())
+    } else {
+      result <- df %>%
+        dplyr::filter(!is.na(!!rlang::sym(var_name))) %>%
+        dplyr::group_by(!!rlang::sym(var_name) := !!dbplot::db_bin(!!rlang::sym(var_name), bins = bins),
+                        !!rlang::sym(target_var)) %>%
+        dplyr::summarise(count = dplyr::n())
+    }
   } else if (type == 'average') {
-    result <- df %>%
-      dplyr::filter(!is.na(!!rlang::sym(var_name))) %>%
-      dplyr::group_by(!!rlang::sym(var_name) := !!dbplot::db_bin(!!rlang::sym(var_name), bins = bins)) %>%
-      dplyr::summarise(!!rlang::sym(target_var) := mean(!!rlang::sym(target_var), na.rm = TRUE),
-                count = dplyr::n())
+    if (intlog_binning) {
+      result <- df %>%
+        dplyr::filter(!is.na(!!rlang::sym(var_name))) %>%
+        dplyr::group_by(!!rlang::sym(var_name) := intlog_bin(!!rlang::sym(var_name))) %>%
+        dplyr::summarise(!!rlang::sym(target_var) := mean(!!rlang::sym(target_var), na.rm = TRUE),
+                         count = dplyr::n())
+    } else {
+      result <- df %>%
+        dplyr::filter(!is.na(!!rlang::sym(var_name))) %>%
+        dplyr::group_by(!!rlang::sym(var_name) := !!dbplot::db_bin(!!rlang::sym(var_name), bins = bins)) %>%
+        dplyr::summarise(!!rlang::sym(target_var) := mean(!!rlang::sym(target_var), na.rm = TRUE),
+                         count = dplyr::n())
+    }
   }
 
   result
@@ -193,4 +209,26 @@ plot_all_analysis_results_vl <- function(analysis_results, which = 'both', color
 
 }
 
+name_bins <- function(x_min, x_max) {
+  if (is.na(x_min) || is.na(x_max)) {
+    return(NA_character_)
+  } else if (x_min[1] == x_max[1]) {
+    return(as.character(x_min))
+  } else {
+    return(paste0(x_min, '-', x_max))
+  }
+}
 
+intlog_bin <- function(x) {
+  tibble(x) %>%
+    mutate(intlog = round(log(x + 1), 0)) %>%
+    group_by(intlog) %>%
+    mutate(x_min = min(x),
+           x_max = max(x),
+           out = name_bins(x_min, x_max)) %>%
+    ungroup() %>%
+    mutate(prefix = paste0(letters[as.numeric(as.factor(x_min))], '. '),
+           prefix = ifelse(prefix == 'NA. ', 'z. ', prefix),
+           out = paste0(prefix, out)) %>%
+    pull(out)
+}

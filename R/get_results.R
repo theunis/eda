@@ -22,13 +22,14 @@ get_factor_results <- function(df, target_var, ignore_vars = c(),
 
 #' @rdname get_factor_results
 get_numeric_results <- function(df, target_var, ignore_vars = c(),
-                                type = 'average', bins = 30) {
+                                type = 'average', bins = 30, intlog_binning = TRUE) {
   numeric_vars <- get_numeric_vars(df, target_var, ignore_vars = ignore_vars)
   numeric_results <- tibble::tibble(variable = numeric_vars) %>%
     dplyr::group_by(variable) %>%
     dplyr::do(analysis_table = create_numeric_table(df, var_name = .$variable,
                                                     target_var = target_var,
-                                                    type = type, bins = bins))
+                                                    type = type, bins = bins,
+                                                    intlog_binning = intlog_binning))
   numeric_results
 }
 
