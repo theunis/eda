@@ -4,14 +4,12 @@ This tool will help you do initial analysis on your data where your goal is bina
 
 ## Installation
 
-You can install this using the `remotes` package. Do not unzip the zip file, but keep as is, then run:
+You can install this using the `remotes` package:
 
 ``` r
 install.packages('remotes')
-remotes::install_local('eda-master.zip')
+remotes::install_github('theunis/eda')
 ```
-
-Make sure you that you point to the right zip file on your computer.
 
 ## Usage
 
