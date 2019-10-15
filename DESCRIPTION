@@ -22,6 +22,7 @@ Imports:
   purrr,
   rmarkdown,
   tibble,
+  stringr,
   vlbuildr
 RoxygenNote: 6.1.1
 Remotes: vegawidget/vlbuildr

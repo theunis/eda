@@ -127,6 +127,10 @@ get_numeric_vars <- function(df, target_var, ignore_vars = c()) {
 #' @rdname plot_analysis_category
 plot_analysis_category_vl <- function(analysis_result, type = 'average', color = 'salmon') {
   variable_name <- colnames(analysis_result)[1]
+  if (stringr::str_detect(variable_name, '\\.')) {
+    variable_name <- stringr::str_replace_all(variable_name, '\\.', '_')
+    colnames(analysis_result)[1] <- variable_name
+  }
   target_var <- colnames(analysis_result)[2]
   target_line <- sum(analysis_result['count']*analysis_result[target_var]) / sum(analysis_result['count'])
 
